@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
 
     e = JpDict.RomajiDict()
+    print([i[1] for i in e.recite_words(3,"jpn")])
 
-    print(e.__get_n_words__(3))
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

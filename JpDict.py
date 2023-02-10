@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from copy import deepcopy
 import random
 
+mode_list=["eng","jpn"]
 
 class AbstractDict(ABC):
     @abstractmethod
@@ -9,7 +10,7 @@ class AbstractDict(ABC):
         pass
 
     @abstractmethod
-    def recite_words(self, n):
+    def recite_words(self, n, mode):
         pass
 
     @abstractmethod
@@ -37,7 +38,7 @@ class HiraganaDict(AbstractDict):
         self.words_count = len(self.word_dict.keys())
         self.log_dir = "./logs/hiragana.log"
 
-    def recite_words(self, n):
+    def recite_words(self, n, mode):
         assert 0 < n <= self.words_count
         return self.__get_n_words__(n)
 
@@ -50,9 +51,10 @@ class HiraganaDict(AbstractDict):
         return keys_pick, words_pick
 
 
-class KatakanaDict(AbstractDict):
+class KatakanaDict(HiraganaDict):
 
     def __init__(self):
+        super().__init__()
         self.word_dict = {'a': 'ア', 'i': 'イ', 'u': 'ウ', 'e': 'エ', 'o': 'オ', 'ka': 'カ', 'ki': 'キ', 'ku': 'ク', 'ke': 'ケ',
                           'ko': 'コ', 'sa': 'サ', 'shi': 'シ', 'su': 'ス', 'se': 'セ', 'so': 'ソ', 'ta': 'タ', 'chi': 'チ',
                           'tsu': 'ツ', 'te': 'テ', 'to': 'ト', 'na': 'ナ', 'ni': 'ニ', 'nu': 'ヌ', 'ne': 'ネ', 'no': 'ノ',
@@ -63,17 +65,6 @@ class KatakanaDict(AbstractDict):
         self.words_count = len(self.word_dict.keys())
         self.log_dir = "./logs/katakana.log"
 
-    def recite_words(self, n):
-        assert 0 < n <= self.words_count
-        return self.__get_n_words__(n)
-
-    def show_error_log(self):
-        pass
-
-    def __get_n_words__(self, n):
-        keys_pick = random.sample(list(self.word_dict.keys()), n)
-        words_pick = [self.word_dict.get(i) for i in keys_pick]
-        return keys_pick, words_pick
 
 
 
@@ -82,10 +73,21 @@ class RomajiDict(AbstractDict):
     def __init__(self):
         self.hiragana = HiraganaDict()
         self.katakana = KatakanaDict()
-        self.word_dict = dict_merge(self.hiragana.word_dict , self.katakana.word_dict)
+        self.word_dict = dict_merge(self.hiragana.word_dict, self.katakana.word_dict)
+        self.words_count = len(self.word_dict.keys())
+        self.log_dir = "./logs/romaji.log"
 
-    def recite_words(self, n):
-        pass
+    def recite_words(self, n, mode):
+        assert 0 < n <= self.words_count
+        eng_jpn=self.__get_n_words__(n)
+        assert mode in mode_list#["eng","jpn","single_hira","single_kata"]
+        if mode == "eng":
+            return eng_jpn[0]
+        elif mode == "jpn":
+            return eng_jpn[1]
+        else:
+            pass
+        return self.__get_n_words__(n)
 
     def show_error_log(self):
         pass
