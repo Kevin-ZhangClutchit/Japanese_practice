@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+from copy import deepcopy
 import random
+
 
 class AbstractDict(ABC):
     @abstractmethod
@@ -15,6 +17,14 @@ class AbstractDict(ABC):
         pass
 
 
+def dict_merge(dict1, dict2):
+    new_dict = deepcopy(dict1)
+    for i, j in zip(dict1, dict2):
+        assert i == j
+        new_dict.update({i: (dict1.get(i), dict2.get(j))})
+    return new_dict
+
+
 class HiraganaDict(AbstractDict):
 
     def __init__(self):
@@ -24,7 +34,7 @@ class HiraganaDict(AbstractDict):
                           'ha': 'は', 'hi': 'ひ', 'fu': 'ふ', 'he': 'へ', 'ho': 'ほ', 'ma': 'ま', 'mi': 'み', 'mu': 'む',
                           'me': 'め', 'mo': 'も', 'ya': 'や', 'yu': 'ゆ', 'yo': 'よ', 'ra': 'ら', 'ri': 'り', 'ru': 'る',
                           're': 'れ', 'ro': 'ろ', 'wa': 'わ', 'wo': 'を', 'n': 'ん'}
-        self.words_count=len(self.word_dict.keys())
+        self.words_count = len(self.word_dict.keys())
         self.log_dir = "./logs/hiragana.log"
 
     def recite_words(self, n):
@@ -34,10 +44,10 @@ class HiraganaDict(AbstractDict):
     def show_error_log(self):
         pass
 
-    def __get_n_words__(self , n):
-        keys_pick = random.sample(list(self.word_dict.keys()),n)
+    def __get_n_words__(self, n):
+        keys_pick = random.sample(list(self.word_dict.keys()), n)
         words_pick = [self.word_dict.get(i) for i in keys_pick]
-        return keys_pick,words_pick
+        return keys_pick, words_pick
 
 
 class KatakanaDict(AbstractDict):
@@ -65,3 +75,22 @@ class KatakanaDict(AbstractDict):
         words_pick = [self.word_dict.get(i) for i in keys_pick]
         return keys_pick, words_pick
 
+
+
+
+class RomajiDict(AbstractDict):
+    def __init__(self):
+        self.hiragana = HiraganaDict()
+        self.katakana = KatakanaDict()
+        self.word_dict = dict_merge(self.hiragana.word_dict , self.katakana.word_dict)
+
+    def recite_words(self, n):
+        pass
+
+    def show_error_log(self):
+        pass
+
+    def __get_n_words__(self, n):
+        keys_pick = random.sample(list(self.word_dict.keys()), n)
+        words_pick = [self.word_dict.get(i) for i in keys_pick]
+        return keys_pick, words_pick
