@@ -31,7 +31,10 @@ if __name__ == '__main__':
 
 
     e = JpDict.RomajiDict()
-    print([i[1] for i in e.recite_words(3,"jpn")])
+    result=e.recite_words(10,"jpn")
+    print([i[1] for i in list(result.keys())])
+    input("Enter to show answer")
+    print(list(result.values()))
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
